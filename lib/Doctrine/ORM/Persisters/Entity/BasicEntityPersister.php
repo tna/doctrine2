@@ -1057,7 +1057,7 @@ class BasicEntityPersister implements EntityPersister
 
         $columnList = $this->getSelectColumnsSQL();
         $tableAlias = $this->getSQLTableAlias($this->class->name);
-        $filterSql  = $this->generateFilterConditionSQL($this->class, $tableAlias);
+        $filterSql  = $this->generateFilterConditionSQL($this->class, $tableAlias, $criteria);
         $tableName  = $this->quoteStrategy->getTableName($this->class, $this->platform);
 
         if ('' !== $filterSql) {
@@ -1937,11 +1937,16 @@ class BasicEntityPersister implements EntityPersister
      *
      * @return string The SQL query part to add to a query.
      */
-    protected function generateFilterConditionSQL(ClassMetadata $targetEntity, $targetTableAlias)
+    protected function generateFilterConditionSQL(ClassMetadata $targetEntity, $targetTableAlias, $criteria  = null)
     {
         $filterClauses = array();
 
         foreach ($this->em->getFilters()->getEnabledFilters() as $filter) {
+
+            if (true === is_callable(array($filter, 'setFilterCriteria'))) {
+                $filter->setFilterCriteria($criteria);
+            }
+
             if ('' !== $filterExpr = $filter->addFilterConstraint($targetEntity, $targetTableAlias)) {
                 $filterClauses[] = '(' . $filterExpr . ')';
             }

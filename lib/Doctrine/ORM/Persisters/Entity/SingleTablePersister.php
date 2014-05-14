@@ -174,12 +174,12 @@ class SingleTablePersister extends AbstractEntityInheritancePersister
     /**
      * {@inheritdoc}
      */
-    protected function generateFilterConditionSQL(ClassMetadata $targetEntity, $targetTableAlias)
+    protected function generateFilterConditionSQL(ClassMetadata $targetEntity, $targetTableAlias, $criteria = null)
     {
         // Ensure that the filters are applied to the root entity of the inheritance tree
         $targetEntity = $this->em->getClassMetadata($targetEntity->rootEntityName);
         // we don't care about the $targetTableAlias, in a STI there is only one table.
 
-        return parent::generateFilterConditionSQL($targetEntity, $targetTableAlias);
+        return parent::generateFilterConditionSQL($targetEntity, $targetTableAlias, $criteria);
     }
 }
